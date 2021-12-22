@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/christophermontero/blockchain-js/issues"
   },
-  "homepage": "https://github.com/christophermontero/blockchain-js#readme"
+  "homepage": "https://github.com/christophermontero/blockchain-js#readme",
+  "dependencies": {
+    "sha256": "^0.2.0"
+  }
 }
