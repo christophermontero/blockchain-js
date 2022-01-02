@@ -4,6 +4,8 @@
   "description": "Decentralized blockchain network by using the JavaScript programming language",
   "main": "blockchain.js",
   "scripts": {
+    "start": "NODE_ENV=production node api",
+    "dev": "NODE_ENV=development nodemon api",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +24,10 @@
   },
   "homepage": "https://github.com/christophermontero/blockchain-js#readme",
   "dependencies": {
+    "express": "^4.17.2",
     "sha256": "^0.2.0"
+  },
+  "devDependencies": {
+    "colors": "^1.4.0"
   }
 }
