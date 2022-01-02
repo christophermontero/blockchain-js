@@ -1,8 +1,8 @@
 const express = require("express");
-const { greeting } = require("../controllers/blockchain");
+const { getBlockchain } = require("../controllers/blockchain");
 
 const router = express.Router();
 
-router.route("/").get(greeting);
+router.route("/").get(getBlockchain);
 
 module.exports = router;
