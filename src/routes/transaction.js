@@ -1,8 +1,8 @@
 const express = require("express");
-const { greeting } = require("../controllers/transaction");
+const { createTransaction } = require("../controllers/blockchain");
 
 const router = express.Router();
 
-router.route("/").get(greeting);
+router.route("/").post(createTransaction);
 
 module.exports = router;

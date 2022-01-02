@@ -1,5 +1,5 @@
 const express = require("express");
-const { greeting } = require("../controllers/mine");
+const { greeting } = require("../controllers/blockchain");
 
 const router = express.Router();
 
