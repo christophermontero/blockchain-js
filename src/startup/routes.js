@@ -8,8 +8,7 @@ const mine = require("../routes/mine");
 
 module.exports = function (app) {
   // Mount routes
-  console.log(path.join(__dirname, "../public"));
-  app.use(express.static(path.join(__dirname, "src/public")));
+  app.use(express.static("src/public"));
   app.use("/api/v1/blockchain", blockchain);
   app.use("/api/v1/transaction", transaction);
   app.use("/api/v1/mine", mine);

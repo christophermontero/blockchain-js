@@ -21,8 +21,143 @@
       "description": "development"
     }
   ],
-  "paths": {},
+  "paths": {
+    "/api/v1/blockchain": {
+      "get": {
+        "summary": "Get Blockchain",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Blockchain"
+                },
+                "examples": {
+                  "blockchain-example": {
+                    "$ref": "#/components/examples/blockchain"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-blockchain",
+        "description": "Get the entire Blockchain."
+      }
+    }
+  },
   "components": {
-    "schemas": {}
+    "schemas": {
+      "Blockchain": {
+        "title": "Blockchain",
+        "description": "This is a representation for Blockchain object.",
+        "x-examples": {},
+        "type": "object",
+        "properties": {
+          "chain": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Chain"
+            }
+          },
+          "pendingTransactions": {
+            "type": "array",
+            "description": "The pending transactions go here.",
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            }
+          }
+        }
+      },
+      "Chain": {
+        "description": "This is a representation for chain object.",
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "index": {
+            "type": "number"
+          },
+          "timestamp": {
+            "type": "number"
+          },
+          "transactions": {
+            "type": "array",
+            "description": "When transactions are added to the Block, go here.",
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            }
+          },
+          "nonce": {
+            "type": "number"
+          },
+          "hash": {
+            "type": "string",
+            "minLength": 1
+          },
+          "prevBlockHash": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "Transaction": {
+        "description": "This is a representation for transactions object.",
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "sender": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Sender address."
+          },
+          "recipient": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Recipient address"
+          }
+        }
+      }
+    },
+    "responses": {
+      "blockchain": {
+        "description": "Example response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Blockchain"
+            },
+            "examples": {}
+          }
+        }
+      }
+    },
+    "examples": {
+      "blockchain": {
+        "value": {
+          "chain": [
+            {
+              "index": 1,
+              "timestamp": 1641415753879,
+              "transactions": [],
+              "nonce": 0,
+              "hash": "0",
+              "prevBlockHash": "0"
+            }
+          ],
+          "pendingTransactions": [
+            {
+              "amount": 20,
+              "sender": "sender address",
+              "recipient": "recipient address"
+            }
+          ]
+        }
+      }
+    }
   }
 }
