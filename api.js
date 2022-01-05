@@ -3,7 +3,7 @@ const app = express();
 require("colors");
 
 require("./src/startup/config")(app);
-require("./src/startup/routes")(app);
+require("./src/startup/endpoints")(app);
 
 const port = process.env.PORT || 3000;
 

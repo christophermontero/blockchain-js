@@ -56,13 +56,13 @@ Blockchain.prototype.hashBlock = function (
   return hash;
 };
 
-Blockchain.prototype.proofOfWork = function (prevBlockhash, currBlockData) {
+Blockchain.prototype.proofOfWork = function (prevBlockHash, currBlockData) {
   let nonce = 0;
-  let hash = this.hashBlock(prevBlockhash, currBlockData, nonce);
+  let hash = this.hashBlock(prevBlockHash, currBlockData, nonce);
 
   while (hash.substring(0, 4) !== "0000") {
     nonce++;
-    hash = this.hashBlock(prevBlockhash, currBlockData, nonce);
+    hash = this.hashBlock(prevBlockHash, currBlockData, nonce);
   }
 
   return nonce;
