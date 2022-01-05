@@ -26,25 +26,80 @@
       "get": {
         "summary": "Get Blockchain",
         "tags": [],
+        "operationId": "get-blockchain",
+        "description": "Get the entire Blockchain.",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Blockchain"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Blockchain"
+                    }
+                  ]
                 },
                 "examples": {
-                  "blockchain-example": {
+                  "blockhain-object": {
                     "$ref": "#/components/examples/blockchain"
                   }
                 }
               }
             }
           }
+        }
+      }
+    },
+    "/api/v1/transaction": {
+      "post": {
+        "summary": "Create transaction",
+        "operationId": "post-transaction",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "x-examples": {
+                    "example-1": {
+                      "note": "Transaction will be added in block 2"
+                    }
+                  },
+                  "properties": {
+                    "note": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "create-transaction": {
+                    "value": {
+                      "note": "Transaction will be added in block 2"
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
-        "operationId": "get-blockchain",
-        "description": "Get the entire Blockchain."
+        "description": "Create a new transaction into the Blockchain.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Transaction"
+              },
+              "examples": {
+                "transaction-body": {
+                  "$ref": "#/components/examples/transaction"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -52,7 +107,7 @@
     "schemas": {
       "Blockchain": {
         "title": "Blockchain",
-        "description": "This is a representation for Blockchain object.",
+        "description": "",
         "x-examples": {},
         "type": "object",
         "properties": {
@@ -72,7 +127,7 @@
         }
       },
       "Chain": {
-        "description": "This is a representation for chain object.",
+        "description": "",
         "type": "object",
         "x-examples": {},
         "properties": {
@@ -103,7 +158,7 @@
         }
       },
       "Transaction": {
-        "description": "This is a representation for transactions object.",
+        "description": "",
         "type": "object",
         "x-examples": {},
         "properties": {
@@ -123,19 +178,7 @@
         }
       }
     },
-    "responses": {
-      "blockchain": {
-        "description": "Example response",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Blockchain"
-            },
-            "examples": {}
-          }
-        }
-      }
-    },
+    "responses": {},
     "examples": {
       "blockchain": {
         "value": {
@@ -157,7 +200,15 @@
             }
           ]
         }
+      },
+      "transaction": {
+        "value": {
+          "amount": 20,
+          "sender": "sender address",
+          "recipient": "recipient address"
+        }
       }
-    }
+    },
+    "requestBodies": {}
   }
 }
