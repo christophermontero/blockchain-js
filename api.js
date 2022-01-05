@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 require("colors");
 
-require("./src/config")(app);
-require("./src/routes")(app);
+require("./src/startup/config")(app);
+require("./src/startup/routes")(app);
 
 const port = process.env.PORT || 3000;
 
