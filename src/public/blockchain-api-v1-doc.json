@@ -87,19 +87,55 @@
         },
         "description": "Create a new transaction into the Blockchain.",
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Transaction"
-              },
-              "examples": {
-                "transaction-body": {
-                  "$ref": "#/components/examples/transaction"
+          "$ref": "#/components/requestBodies/transaction"
+        }
+      }
+    },
+    "/api/v1/mine": {
+      "get": {
+        "summary": "Mine block",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "note": {
+                          "type": "string"
+                        },
+                        "block": {
+                          "$ref": "#/components/schemas/Block"
+                        }
+                      }
+                    }
+                  ],
+                  "type": "object"
+                },
+                "examples": {
+                  "mine-block": {
+                    "value": {
+                      "note": "New block mined successfully",
+                      "block": {
+                        "index": 2,
+                        "timestamp": 1641425687451,
+                        "transactions": [],
+                        "nonce": 90910,
+                        "hash": "00009f125ac83c6f8b9b6e01bab0e3977fc6a4cb90d77fa00459b0f5f91eef32",
+                        "prevBlockHash": "0"
+                      }
+                    }
+                  }
                 }
               }
             }
           }
-        }
+        },
+        "operationId": "get-mine",
+        "description": "Add a new block to the Blockchain."
       }
     }
   },
@@ -114,7 +150,7 @@
           "chain": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Chain"
+              "$ref": "#/components/schemas/Block"
             }
           },
           "pendingTransactions": {
@@ -126,10 +162,11 @@
           }
         }
       },
-      "Chain": {
+      "Block": {
         "description": "",
         "type": "object",
         "x-examples": {},
+        "title": "",
         "properties": {
           "index": {
             "type": "number"
@@ -148,12 +185,10 @@
             "type": "number"
           },
           "hash": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "prevBlockHash": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           }
         }
       },
@@ -166,14 +201,10 @@
             "type": "number"
           },
           "sender": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Sender address."
+            "type": "string"
           },
           "recipient": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Recipient address"
+            "type": "string"
           }
         }
       }
@@ -195,8 +226,8 @@
           "pendingTransactions": [
             {
               "amount": 20,
-              "sender": "sender address",
-              "recipient": "recipient address"
+              "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+              "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
             }
           ]
         }
@@ -204,11 +235,56 @@
       "transaction": {
         "value": {
           "amount": 20,
-          "sender": "sender address",
-          "recipient": "recipient address"
+          "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+          "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
         }
       }
     },
-    "requestBodies": {}
+    "requestBodies": {
+      "transaction": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "",
+              "type": "object",
+              "x-examples": {
+                "example-1": {
+                  "amount": 20,
+                  "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                  "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+                }
+              },
+              "properties": {
+                "amount": {
+                  "type": "number"
+                },
+                "sender": {
+                  "type": "string",
+                  "description": "Sender address.",
+                  "minLength": 64,
+                  "maxLength": 64
+                },
+                "recipient": {
+                  "type": "string",
+                  "description": "Recipient address.",
+                  "minLength": 64,
+                  "maxLength": 64
+                }
+              },
+              "required": [
+                "amount",
+                "sender",
+                "recipient"
+              ]
+            },
+            "examples": {
+              "transaction-body": {
+                "$ref": "#/components/examples/transaction"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
