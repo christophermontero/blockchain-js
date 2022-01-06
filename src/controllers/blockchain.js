@@ -37,9 +37,9 @@ exports.createNewBlock = (req, res) => {
 
   const nonce = testcoin.proofOfWork(prevBlockHash, currBlockData);
   const blockHash = testcoin.hashBlock(prevBlockHash, currBlockData, nonce);
-  const newBlock = testcoin.createNewBlock(nonce, prevBlockHash, blockHash);
 
   testcoin.createNewTransaction(12.5, "00", nodeAddress);
+  const newBlock = testcoin.createNewBlock(nonce, prevBlockHash, blockHash);
 
   res.json({ note: "New block mined successfully", block: newBlock });
 };
