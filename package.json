@@ -25,6 +25,7 @@
   "homepage": "https://github.com/christophermontero/blockchain-js#readme",
   "dependencies": {
     "express": "^4.17.2",
+    "joi": "^17.5.0",
     "morgan": "^1.10.0",
     "sha256": "^0.2.0",
     "uuid": "^8.3.2"
