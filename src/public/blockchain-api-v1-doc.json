@@ -83,6 +83,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
           }
         },
         "description": "Create a new transaction into the Blockchain.",
@@ -209,7 +212,99 @@
         }
       }
     },
-    "responses": {},
+    "responses": {
+      "badRequest": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "",
+              "type": "object",
+              "x-examples": {
+                "example-1": {
+                  "_original": {
+                    "amount": "a",
+                    "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                    "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+                  },
+                  "details": [
+                    {
+                      "message": "\"amount\" must be a number",
+                      "path": [
+                        "amount"
+                      ],
+                      "type": "number.base",
+                      "context": {
+                        "label": "amount",
+                        "value": "a",
+                        "key": "amount"
+                      }
+                    }
+                  ]
+                }
+              },
+              "properties": {
+                "_original": {
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "type": "string"
+                    },
+                    "sender": {
+                      "type": "string"
+                    },
+                    "recipient": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "details": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "context": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          },
+                          "key": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "examples": {
+              "bad-request": {
+                "$ref": "#/components/examples/badRequest"
+              }
+            }
+          }
+        }
+      }
+    },
     "examples": {
       "blockchain": {
         "value": {
@@ -237,6 +332,29 @@
           "amount": 20,
           "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
           "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+        }
+      },
+      "badRequest": {
+        "value": {
+          "_original": {
+            "amount": "a",
+            "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+            "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+          },
+          "details": [
+            {
+              "message": "\"amount\" must be a number",
+              "path": [
+                "amount"
+              ],
+              "type": "number.base",
+              "context": {
+                "label": "amount",
+                "value": "a",
+                "key": "amount"
+              }
+            }
+          ]
         }
       }
     },
