@@ -1,5 +1,6 @@
 const Blockchain = require("../../blockchain");
 const { v1: uuidv1 } = require("uuid");
+const axios = require("axios");
 
 const nodeAddress = uuidv1().split("-").join("");
 const testcoin = new Blockchain();
@@ -43,3 +44,65 @@ exports.createNewBlock = (req, res) => {
 
   res.json({ note: "New block mined successfully", block: newBlock });
 };
+
+// @desc Register a new node and broadcast it the network
+// @route POST /api/v1/register-broadcast-node
+// @access Public
+exports.registerAndBroadcastNode = (req, res) => {
+  const newNodeUrl = req.body.newNodeUrl;
+
+  if (testcoin.networkNodes.indexOf(newNodeUrl) == -1) {
+    testcoin.networkNodes.push(newNodeUrl);
+  }
+
+  const registerNodesPromises = [];
+  testcoin.networkNodes.forEach((networkNodeUrl) => {
+    const registerOpt = {
+      method: "post",
+      url: networkNodeUrl + "/register-node",
+      data: { newNodeUrl },
+      headers: { "Content-Type": "application/json" }
+    };
+
+    registerNodesPromises.push(axios(registerOpt));
+  });
+
+  Promise.all(registerNodesPromises)
+    .then((data) => {
+      const bulkRegisterOpt = {
+        method: "post",
+        url: newNodeUrl + "/register-nodes-bulk",
+        data: {
+          allNetworkNodes: [...testcoin.networkNodes, testcoin.currentNodeUrl]
+        },
+        headers: { "Content-Type": "application/json" }
+      };
+
+      return axios(bulkRegisterOpt).then((response) => console.log(response));
+    })
+    .then((data) => {
+      res.json({ note: "New node registered with network successfully" });
+    });
+};
+
+// @desc Register a node
+// @route POST /api/v1/register-node
+// @access Public
+exports.registerNode = (req, res) => {
+  const newNodeUrl = req.body.newNodeUrl;
+
+  if (
+    testcoin.networkNodes.indexOf(newNodeUrl) !== -1 &&
+    testcoin.currentNodeUrl == newNodeUrl
+  ) {
+    res.status(400).json({ note: "Node already exists" });
+  }
+
+  testcoin.networkNodes.push(newNodeUrl);
+  res.json({ note: "New node register successfully" });
+};
+
+// @desc Register multiple nodes at once
+// @route POST /api/v1/register-multiple-bulk
+// @access Public
+exports.registerMultipleBulk = (req, res) => {};

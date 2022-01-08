@@ -4,6 +4,7 @@ const express = require("express");
 const blockchain = require("../routes/blockchain");
 const transaction = require("../routes/transaction");
 const mine = require("../routes/mine");
+const registerNode = require("../routes/register-node");
 
 module.exports = function (app) {
   // Mount routes
@@ -11,4 +12,5 @@ module.exports = function (app) {
   app.use("/api/v1/blockchain", blockchain);
   app.use("/api/v1/transaction", transaction);
   app.use("/api/v1/mine", mine);
+  app.use("/api/v1/register-node", registerNode);
 };
