@@ -9,7 +9,7 @@ const testcoin = new Blockchain();
 // @route GET /api/v1/blockchain
 // @access Public
 exports.getBlockchain = (req, res) => {
-  res.send(testcoin);
+  return res.send(testcoin);
 };
 
 // @desc Create new transaction in the Blockchain
@@ -22,7 +22,7 @@ exports.createTransaction = (req, res) => {
     req.body.recipient
   );
 
-  res.json({ note: `Transaction will be added in block ${blockIndex}` });
+  return res.json({ note: `Transaction will be added in block ${blockIndex}` });
 };
 
 // @desc Create new block
@@ -42,7 +42,7 @@ exports.createNewBlock = (req, res) => {
   testcoin.createNewTransaction(12.5, "00", nodeAddress);
   const newBlock = testcoin.createNewBlock(nonce, prevBlockHash, blockHash);
 
-  res.json({ note: "New block mined successfully", block: newBlock });
+  return res.json({ note: "New block mined successfully", block: newBlock });
 };
 
 // @desc Register a new node and broadcast it the network
@@ -81,7 +81,9 @@ exports.registerAndBroadcastNode = (req, res) => {
       return axios(bulkRegisterOpt).then((response) => console.log(response));
     })
     .then((data) => {
-      res.json({ note: "New node registered with network successfully" });
+      return res.json({
+        note: "New node registered with network successfully"
+      });
     });
 };
 
@@ -92,17 +94,36 @@ exports.registerNode = (req, res) => {
   const newNodeUrl = req.body.newNodeUrl;
 
   if (
-    testcoin.networkNodes.indexOf(newNodeUrl) !== -1 &&
+    testcoin.networkNodes.indexOf(newNodeUrl) !== -1 ||
     testcoin.currentNodeUrl == newNodeUrl
   ) {
-    res.status(400).json({ note: "Node already exists" });
+    return res.status(400).json({ note: "Node already exists" });
   }
 
   testcoin.networkNodes.push(newNodeUrl);
-  res.json({ note: "New node register successfully" });
+  return res.json({ note: "New node register successfully" });
 };
 
 // @desc Register multiple nodes at once
 // @route POST /api/v1/register-multiple-bulk
 // @access Public
-exports.registerMultipleBulk = (req, res) => {};
+exports.registerMultipleBulk = (req, res) => {
+  const allNetworkNodes = req.body.allNetworkNodes;
+  let nodeAlreadyPresent = false;
+
+  allNetworkNodes.forEach((networkNodeUrl) => {
+    if (
+      testcoin.networkNodes.indexOf(networkNodeUrl) !== -1 ||
+      testcoin.currentNodeUrl == networkNodeUrl
+    ) {
+      nodeAlreadyPresent = true;
+    } else {
+      testcoin.networkNodes.push(networkNodeUrl);
+    }
+  });
+
+  if (nodeAlreadyPresent)
+    return res.status(400).json({ note: "Node already exists" });
+
+  return res.send({ note: "Bulk registration successfully" });
+};

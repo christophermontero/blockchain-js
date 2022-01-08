@@ -4,7 +4,9 @@ const express = require("express");
 const blockchain = require("../routes/blockchain");
 const transaction = require("../routes/transaction");
 const mine = require("../routes/mine");
+const registerAndBroadcastNode = require("../routes/register-broadcast-node");
 const registerNode = require("../routes/register-node");
+const registerMultipleBulk = require("../routes/register-multiple-bulk");
 
 module.exports = function (app) {
   // Mount routes
@@ -13,4 +15,6 @@ module.exports = function (app) {
   app.use("/api/v1/transaction", transaction);
   app.use("/api/v1/mine", mine);
   app.use("/api/v1/register-node", registerNode);
+  app.use("/api/v1/register-broadcast-node", registerAndBroadcastNode);
+  app.use("/api/v1/register-multiple-bulk", registerMultipleBulk);
 };
