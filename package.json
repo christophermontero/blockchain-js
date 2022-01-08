@@ -4,8 +4,11 @@
   "description": "Decentralized blockchain network by using the JavaScript programming language",
   "main": "blockchain.js",
   "scripts": {
-    "start": "NODE_ENV=production node api",
-    "dev": "NODE_ENV=development nodemon api",
+    "start": "NODE_ENV=production node networkNode",
+    "node1": "NODE_ENV=development nodemon networkNode 3001",
+    "node2": "NODE_ENV=development nodemon networkNode 3002",
+    "node3": "NODE_ENV=development nodemon networkNode 3003",
+    "node4": "NODE_ENV=development nodemon networkNode 3004",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
