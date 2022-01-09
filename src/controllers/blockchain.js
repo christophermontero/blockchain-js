@@ -72,7 +72,7 @@ exports.registerAndBroadcastNode = (req, res) => {
     .then((response) => {
       const bulkRegisterOpt = {
         method: "post",
-        url: newNodeUrl + "/api/v1/register-multiple-bulk",
+        url: newNodeUrl + "/api/v1/register-nodes-bulk",
         data: {
           allNetworkNodes: [...testcoin.networkNodes, testcoin.currentNodeUrl]
         },
@@ -88,7 +88,7 @@ exports.registerAndBroadcastNode = (req, res) => {
       testcoin.networkNodes.push(newNodeUrl);
     })
     .catch((error) => {
-      return res.status(500).send(error);
+      return res.status(400).send(error);
     });
 };
 
@@ -102,7 +102,7 @@ exports.registerNode = (req, res) => {
     testcoin.networkNodes.indexOf(newNodeUrl) !== -1 ||
     testcoin.currentNodeUrl == newNodeUrl
   ) {
-    return res.status(401).send({ note: "Node already exists" });
+    return res.status(400).send({ note: "Node already exists" });
   }
 
   testcoin.networkNodes.push(newNodeUrl);
@@ -110,9 +110,9 @@ exports.registerNode = (req, res) => {
 };
 
 // @desc Register multiple nodes at once
-// @route POST /api/v1/register-multiple-bulk
+// @route POST /api/v1/register-nodes-bulk
 // @access Public
-exports.registerMultipleBulk = (req, res) => {
+exports.registerNodesBulk = (req, res) => {
   const allNetworkNodes = req.body.allNetworkNodes;
   let nodeAlreadyPresent = false;
 
@@ -128,7 +128,7 @@ exports.registerMultipleBulk = (req, res) => {
   });
 
   if (nodeAlreadyPresent)
-    return res.status(402).json({ note: "Node already exists" });
+    return res.status(400).json({ note: "Node already exists" });
 
   return res.send({ note: "Bulk registration successfully" });
 };
