@@ -51,15 +51,16 @@ exports.createNewBlock = (req, res) => {
 exports.registerAndBroadcastNode = (req, res) => {
   const newNodeUrl = req.body.newNodeUrl;
 
-  if (testcoin.networkNodes.indexOf(newNodeUrl) == -1) {
-    testcoin.networkNodes.push(newNodeUrl);
-  }
+  if (testcoin.networkNodes == 0)
+    return res
+      .status(400)
+      .json({ note: "Must be at least one node registered" });
 
   const registerNodesPromises = [];
   testcoin.networkNodes.forEach((networkNodeUrl) => {
     const registerOpt = {
       method: "post",
-      url: networkNodeUrl + "/register-node",
+      url: networkNodeUrl + "/api/v1/register-node",
       data: { newNodeUrl },
       headers: { "Content-Type": "application/json" }
     };
@@ -68,22 +69,26 @@ exports.registerAndBroadcastNode = (req, res) => {
   });
 
   Promise.all(registerNodesPromises)
-    .then((data) => {
+    .then((response) => {
       const bulkRegisterOpt = {
         method: "post",
-        url: newNodeUrl + "/register-nodes-bulk",
+        url: newNodeUrl + "/api/v1/register-multiple-bulk",
         data: {
           allNetworkNodes: [...testcoin.networkNodes, testcoin.currentNodeUrl]
         },
         headers: { "Content-Type": "application/json" }
       };
 
-      return axios(bulkRegisterOpt).then((response) => console.log(response));
-    })
-    .then((data) => {
-      return res.json({
-        note: "New node registered with network successfully"
+      axios(bulkRegisterOpt).then((response) => {
+        return res.json({
+          note: "New node registered with network successfully"
+        });
       });
+
+      testcoin.networkNodes.push(newNodeUrl);
+    })
+    .catch((error) => {
+      return res.status(500).send(error);
     });
 };
 
@@ -97,7 +102,7 @@ exports.registerNode = (req, res) => {
     testcoin.networkNodes.indexOf(newNodeUrl) !== -1 ||
     testcoin.currentNodeUrl == newNodeUrl
   ) {
-    return res.status(400).json({ note: "Node already exists" });
+    return res.status(401).send({ note: "Node already exists" });
   }
 
   testcoin.networkNodes.push(newNodeUrl);
@@ -123,7 +128,7 @@ exports.registerMultipleBulk = (req, res) => {
   });
 
   if (nodeAlreadyPresent)
-    return res.status(400).json({ note: "Node already exists" });
+    return res.status(402).json({ note: "Node already exists" });
 
   return res.send({ note: "Bulk registration successfully" });
 };
