@@ -58,19 +58,19 @@ exports.registerAndBroadcastNode = (req, res) => {
 
   const registerNodesPromises = [];
   testcoin.networkNodes.forEach((networkNodeUrl) => {
-    const registerOpt = {
+    const requestOpt = {
       method: "post",
       url: networkNodeUrl + "/api/v1/register-node",
-      data: { newNodeUrl },
-      headers: { "Content-Type": "application/json" }
+      data: { networkNodeUrl },
+      headers: { "content-type": "application/json" }
     };
 
-    registerNodesPromises.push(axios(registerOpt));
+    registerNodesPromises.push(axios(requestOpt));
   });
 
   Promise.all(registerNodesPromises)
     .then((response) => {
-      const bulkRegisterOpt = {
+      const requestOpt = {
         method: "post",
         url: newNodeUrl + "/api/v1/register-nodes-bulk",
         data: {
@@ -79,7 +79,7 @@ exports.registerAndBroadcastNode = (req, res) => {
         headers: { "Content-Type": "application/json" }
       };
 
-      axios(bulkRegisterOpt).then((response) => {
+      axios(requestOpt).then((response) => {
         return res.json({
           note: "New node registered with network successfully"
         });
@@ -131,4 +131,39 @@ exports.registerNodesBulk = (req, res) => {
     return res.status(400).json({ note: "Node already exists" });
 
   return res.send({ note: "Bulk registration successfully" });
+};
+
+// @desc Register a new transaction and broadcast it the network
+// @route POST /api/v1/transaction/broadcast
+// @access Public
+exports.createAndBroadcastTrans = (req, res) => {
+  const newTransaction = testcoin.createNewTransaction(
+    req.body.amount,
+    req.body.sender,
+    req.body.recipient
+  );
+
+  testcoin.createAndBroadcastTrans(newTransaction);
+
+  const createTransPromises = [];
+  testcoin.networkNodes.forEach((networkNodeUrl) => {
+    const requestOpt = {
+      method: "post",
+      url: networkNodeUrl + "/api/v1/transaction",
+      data: { newTransaction },
+      headers: { "content-type": "application/json" }
+    };
+
+    createTransPromises.push(axios(requestOpt));
+  });
+
+  Promise.all(createTransPromises)
+    .then((response) => {
+      return res.json({
+        note: "Transaction created and broadcast successfully"
+      });
+    })
+    .catch((error) => {
+      return res.send(error);
+    });
 };
