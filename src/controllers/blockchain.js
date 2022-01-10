@@ -58,19 +58,19 @@ exports.registerAndBroadcastNode = (req, res) => {
 
   const registerNodesPromises = [];
   testcoin.networkNodes.forEach((networkNodeUrl) => {
-    const requestOpt = {
+    const registerNodeOpt = {
       method: "post",
       url: networkNodeUrl + "/api/v1/register-node",
       data: { networkNodeUrl },
       headers: { "content-type": "application/json" }
     };
 
-    registerNodesPromises.push(axios(requestOpt));
+    registerNodesPromises.push(axios(registerNodeOpt));
   });
 
   Promise.all(registerNodesPromises)
     .then((response) => {
-      const requestOpt = {
+      const registerBulkOpt = {
         method: "post",
         url: newNodeUrl + "/api/v1/register-nodes-bulk",
         data: {
@@ -79,7 +79,7 @@ exports.registerAndBroadcastNode = (req, res) => {
         headers: { "Content-Type": "application/json" }
       };
 
-      axios(requestOpt).then((response) => {
+      axios(registerBulkOpt).then((response) => {
         return res.json({
           note: "New node registered with network successfully"
         });
@@ -147,14 +147,14 @@ exports.createAndBroadcastTrans = (req, res) => {
 
   const createTransPromises = [];
   testcoin.networkNodes.forEach((networkNodeUrl) => {
-    const requestOpt = {
+    const createTransOpt = {
       method: "post",
       url: networkNodeUrl + "/api/v1/transaction",
       data: { newTransaction },
       headers: { "content-type": "application/json" }
     };
 
-    createTransPromises.push(axios(requestOpt));
+    createTransPromises.push(axios(createTransOpt));
   });
 
   Promise.all(createTransPromises)
