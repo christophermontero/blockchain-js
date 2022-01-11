@@ -16,13 +16,45 @@ exports.getBlockchain = (req, res) => {
 // @route POST /api/v1/transaction
 // @access Public
 exports.createTransaction = (req, res) => {
-  const blockIndex = testcoin.createNewTransaction(
+  const newTransaction = req.body;
+  const blockIndex = testcoin.addToPendingTrans(newTransaction);
+
+  return res.json({ note: `Transaction will added in block ${blockIndex}` });
+};
+
+// @desc Register a new transaction and broadcast it the network
+// @route POST /api/v1/transaction/broadcast
+// @access Public
+exports.createAndBroadcastTrans = (req, res) => {
+  const newTransaction = testcoin.createNewTransaction(
     req.body.amount,
     req.body.sender,
     req.body.recipient
   );
 
-  return res.json({ note: `Transaction will be added in block ${blockIndex}` });
+  testcoin.addToPendingTrans(newTransaction);
+
+  const createTransPromises = [];
+  testcoin.networkNodes.forEach((networkNodeUrl) => {
+    const createTransOpt = {
+      method: "post",
+      url: networkNodeUrl + "/api/v1/transaction",
+      data: { newTransaction },
+      headers: { "content-type": "application/json" }
+    };
+
+    createTransPromises.push(axios(createTransOpt));
+  });
+
+  Promise.all(createTransPromises)
+    .then((response) => {
+      return res.json({
+        note: "Transaction created and broadcast successfully"
+      });
+    })
+    .catch((error) => {
+      return res.status(400).send(error);
+    });
 };
 
 // @desc Create new block
@@ -61,7 +93,7 @@ exports.registerAndBroadcastNode = (req, res) => {
     const registerNodeOpt = {
       method: "post",
       url: networkNodeUrl + "/api/v1/register-node",
-      data: { networkNodeUrl },
+      data: { newNodeUrl },
       headers: { "content-type": "application/json" }
     };
 
@@ -131,39 +163,4 @@ exports.registerNodesBulk = (req, res) => {
     return res.status(400).json({ note: "Node already exists" });
 
   return res.send({ note: "Bulk registration successfully" });
-};
-
-// @desc Register a new transaction and broadcast it the network
-// @route POST /api/v1/transaction/broadcast
-// @access Public
-exports.createAndBroadcastTrans = (req, res) => {
-  const newTransaction = testcoin.createNewTransaction(
-    req.body.amount,
-    req.body.sender,
-    req.body.recipient
-  );
-
-  testcoin.createAndBroadcastTrans(newTransaction);
-
-  const createTransPromises = [];
-  testcoin.networkNodes.forEach((networkNodeUrl) => {
-    const createTransOpt = {
-      method: "post",
-      url: networkNodeUrl + "/api/v1/transaction",
-      data: { newTransaction },
-      headers: { "content-type": "application/json" }
-    };
-
-    createTransPromises.push(axios(createTransOpt));
-  });
-
-  Promise.all(createTransPromises)
-    .then((response) => {
-      return res.json({
-        note: "Transaction created and broadcast successfully"
-      });
-    })
-    .catch((error) => {
-      return res.send(error);
-    });
 };

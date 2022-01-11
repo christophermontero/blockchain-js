@@ -8,7 +8,9 @@ const { transactionSchema } = require("../middlewares/schemas");
 
 const router = express.Router();
 
-router.route("/").post(validate(transactionSchema), createTransaction);
-router.route("/broadcast").post(createAndBroadcastTrans);
+router.route("/").post(createTransaction);
+router
+  .route("/broadcast")
+  .post(validate(transactionSchema), createAndBroadcastTrans);
 
 module.exports = router;
