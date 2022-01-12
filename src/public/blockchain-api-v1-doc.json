@@ -46,12 +46,9 @@
                 "schema": {
                   "allOf": [
                     {
-                      "items": {
-                        "$ref": "#/components/schemas/Blockchain"
-                      }
+                      "$ref": "#/components/schemas/Blockchain"
                     }
-                  ],
-                  "type": "array"
+                  ]
                 },
                 "examples": {
                   "blockchain-object": {
@@ -146,10 +143,17 @@
                       "note": "New block mined successfully",
                       "block": {
                         "index": 2,
-                        "timestamp": 1641425687451,
-                        "transactions": [],
-                        "nonce": 90910,
-                        "hash": "00009f125ac83c6f8b9b6e01bab0e3977fc6a4cb90d77fa00459b0f5f91eef32",
+                        "timestamp": 1642010815329,
+                        "transactions": [
+                          {
+                            "transactionId": "3e5c856073d211ec8f13b941e4a40c7b",
+                            "amount": 10,
+                            "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                            "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+                          }
+                        ],
+                        "nonce": 54068,
+                        "hash": "00008410e1b515081b3c124abe1c04da08cae7acedddc79c471e7a7794d81520",
                         "prevBlockHash": "0"
                       }
                     }
@@ -309,7 +313,63 @@
         "operationId": "post-register-broadcast-node",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "x-examples": {
+                    "example-1": {
+                      "note": "New node registered with network successfully"
+                    }
+                  },
+                  "properties": {
+                    "note": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "node-registered": {
+                    "value": {
+                      "note": "New node registered with network successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "x-examples": {
+                    "example-1": {
+                      "note": "Must be at least one node registered"
+                    }
+                  },
+                  "properties": {
+                    "note": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "zero-node": {
+                    "value": {
+                      "note": "Must be at least one node registered"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/axiosError"
           }
         },
         "tags": [
@@ -354,8 +414,8 @@
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/bodyValidation"
+          "500": {
+            "$ref": "#/components/responses/axiosError"
           }
         },
         "description": "Create a new transaction and transmits it to all nodes in the network.",
@@ -365,6 +425,98 @@
         "tags": [
           "transaction"
         ]
+      }
+    },
+    "/api/v1/receive-new-block": {
+      "post": {
+        "summary": "Receive new block",
+        "operationId": "post-receive-block",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "x-examples": {
+                    "example-1": {
+                      "note": "New block received and accepted"
+                    }
+                  },
+                  "properties": {
+                    "note": {
+                      "type": "string"
+                    },
+                    "newBlock": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Block"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "block-accepted": {
+                    "value": {
+                      "note": "New block received and accepted",
+                      "newBlock": {
+                        "index": 1,
+                        "timestamp": 1642002073477,
+                        "transactions": [
+                          {
+                            "amount": 10,
+                            "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                            "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+                          }
+                        ],
+                        "nonce": 0,
+                        "hash": "0",
+                        "prevBlockHash": "0"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "x-examples": {
+                    "example-1": {
+                      "note": "New block rejected"
+                    }
+                  },
+                  "properties": {
+                    "note": {
+                      "type": "string"
+                    },
+                    "": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Block"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "transaction"
+        ],
+        "description": "Recive a new block and added to chain.",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/newBlock"
+        }
       }
     }
   },
@@ -435,6 +587,9 @@
         "type": "object",
         "x-examples": {},
         "properties": {
+          "transactionId": {
+            "type": "string"
+          },
           "amount": {
             "type": "number"
           },
@@ -538,6 +693,139 @@
             }
           }
         }
+      },
+      "axiosError": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "",
+              "type": "object",
+              "x-examples": {
+                "example-1": {
+                  "message": "Request failed with status code 400",
+                  "name": "Error",
+                  "stack": "Error: Request failed with status code 400\n    at createError (/home/giocom/com/apps/blockchain-js/node_modules/axios/lib/core/createError.js:16:15)\n    at settle (/home/giocom/com/apps/blockchain-js/node_modules/axios/lib/core/settle.js:17:12)\n    at IncomingMessage.handleStreamEnd (/home/giocom/com/apps/blockchain-js/node_modules/axios/lib/adapters/http.js:293:11)\n    at IncomingMessage.emit (node:events:402:35)\n    at endReadableNT (node:internal/streams/readable:1343:12)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21)",
+                  "config": {
+                    "transitional": {
+                      "silentJSONParsing": true,
+                      "forcedJSONParsing": true,
+                      "clarifyTimeoutError": false
+                    },
+                    "transformRequest": [
+                      null
+                    ],
+                    "transformResponse": [
+                      null
+                    ],
+                    "timeout": 0,
+                    "xsrfCookieName": "XSRF-TOKEN",
+                    "xsrfHeaderName": "X-XSRF-TOKEN",
+                    "maxContentLength": -1,
+                    "maxBodyLength": -1,
+                    "headers": {
+                      "Accept": "application/json, text/plain, */*",
+                      "Content-Type": "application/json",
+                      "User-Agent": "axios/0.24.0",
+                      "Content-Length": 38
+                    },
+                    "method": "post",
+                    "url": "http://localhost:3002/api/v1/register-node",
+                    "data": "{\"newNodeUrl\":\"http://localhost:3003\"}"
+                  },
+                  "status": 400
+                }
+              },
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "stack": {
+                  "type": "string"
+                },
+                "config": {
+                  "type": "object",
+                  "properties": {
+                    "transitional": {
+                      "type": "object",
+                      "properties": {
+                        "silentJSONParsing": {
+                          "type": "boolean"
+                        },
+                        "forcedJSONParsing": {
+                          "type": "boolean"
+                        },
+                        "clarifyTimeoutError": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "transformRequest": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "transformResponse": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "timeout": {
+                      "type": "number"
+                    },
+                    "xsrfCookieName": {
+                      "type": "string"
+                    },
+                    "xsrfHeaderName": {
+                      "type": "string"
+                    },
+                    "maxContentLength": {
+                      "type": "number"
+                    },
+                    "maxBodyLength": {
+                      "type": "number"
+                    },
+                    "headers": {
+                      "type": "object",
+                      "properties": {
+                        "Accept": {
+                          "type": "string"
+                        },
+                        "Content-Type": {
+                          "type": "string"
+                        },
+                        "User-Agent": {
+                          "type": "string"
+                        },
+                        "Content-Length": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "method": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "status": {
+                  "type": "number"
+                }
+              }
+            },
+            "examples": {
+              "request-error": {
+                "$ref": "#/components/examples/axiosError"
+              }
+            }
+          }
+        }
       }
     },
     "examples": {
@@ -546,18 +834,34 @@
           "chain": [
             {
               "index": 1,
-              "timestamp": 1641415753879,
+              "timestamp": 1642008048586,
               "transactions": [],
               "nonce": 0,
               "hash": "0",
+              "prevBlockHash": "0"
+            },
+            {
+              "index": 2,
+              "timestamp": 1642010815329,
+              "transactions": [
+                {
+                  "transactionId": "3e5c856073d211ec8f13b941e4a40c7b",
+                  "amount": 10,
+                  "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                  "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+                }
+              ],
+              "nonce": 54068,
+              "hash": "00008410e1b515081b3c124abe1c04da08cae7acedddc79c471e7a7794d81520",
               "prevBlockHash": "0"
             }
           ],
           "pendingTransactions": [
             {
-              "amount": 20,
-              "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
-              "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+              "transactionId": "6d291ca073d211ec8f13b941e4a40c7b",
+              "amount": 12.5,
+              "sender": "00",
+              "recipient": "fc0c42a073cb11ec8f13b941e4a40c7b"
             }
           ],
           "currentNodeUrl": "http://localhost:3001",
@@ -613,6 +917,57 @@
             "http://localhost:3004",
             "http://localhost:3005"
           ]
+        }
+      },
+      "newBlock": {
+        "value": {
+          "index": 1,
+          "timestamp": 1642002073477,
+          "transactions": [
+            {
+              "amount": 10,
+              "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+              "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+            }
+          ],
+          "nonce": 0,
+          "hash": "0",
+          "prevBlockHash": "0"
+        }
+      },
+      "axiosError": {
+        "value": {
+          "message": "Request failed with status code 400",
+          "name": "Error",
+          "stack": "Error: Request failed with status code 400",
+          "config": {
+            "transitional": {
+              "silentJSONParsing": true,
+              "forcedJSONParsing": true,
+              "clarifyTimeoutError": false
+            },
+            "transformRequest": [
+              null
+            ],
+            "transformResponse": [
+              null
+            ],
+            "timeout": 0,
+            "xsrfCookieName": "XSRF-TOKEN",
+            "xsrfHeaderName": "X-XSRF-TOKEN",
+            "maxContentLength": -1,
+            "maxBodyLength": -1,
+            "headers": {
+              "Accept": "application/json, text/plain, */*",
+              "Content-Type": "application/json",
+              "User-Agent": "axios/0.24.0",
+              "Content-Length": 38
+            },
+            "method": "post",
+            "url": "http://localhost:3002/api/v1/register-node",
+            "data": "{\"newNodeUrl\":\"http://localhost:3003\"}"
+          },
+          "status": 400
         }
       }
     },
@@ -718,6 +1073,94 @@
             "examples": {
               "bulk-body": {
                 "$ref": "#/components/examples/networkNodes"
+              }
+            }
+          }
+        }
+      },
+      "newBlock": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "",
+              "type": "object",
+              "x-examples": {
+                "example-1": {
+                  "index": 1,
+                  "timestamp": 1642002073477,
+                  "transactions": [
+                    {
+                      "amount": "",
+                      "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                      "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+                    }
+                  ],
+                  "nonce": 0,
+                  "hash": "0",
+                  "prevBlockHash": "0"
+                }
+              },
+              "properties": {
+                "index": {
+                  "type": "number"
+                },
+                "timestamp": {
+                  "type": "number"
+                },
+                "transactions": {
+                  "type": "array",
+                  "uniqueItems": false,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "amount": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "sender": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 64
+                      },
+                      "recipient": {
+                        "type": "string",
+                        "maxLength": 64,
+                        "minLength": 32
+                      }
+                    },
+                    "required": [
+                      "amount",
+                      "sender",
+                      "recipient"
+                    ]
+                  }
+                },
+                "nonce": {
+                  "type": "number"
+                },
+                "hash": {
+                  "type": "string",
+                  "maxLength": 64,
+                  "minLength": 1
+                },
+                "prevBlockHash": {
+                  "type": "string",
+                  "maxLength": 64,
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "index",
+                "timestamp",
+                "transactions",
+                "nonce",
+                "hash",
+                "prevBlockHash"
+              ]
+            },
+            "examples": {
+              "block-body": {
+                "$ref": "#/components/examples/newBlock"
               }
             }
           }

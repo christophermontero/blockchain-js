@@ -54,7 +54,7 @@ exports.createAndBroadcastTrans = (req, res) => {
       });
     })
     .catch((error) => {
-      return res.status(400).send(error);
+      return res.status(500).send(error);
     });
 };
 
@@ -104,7 +104,7 @@ exports.createNewBlock = (req, res) => {
       });
     })
     .catch((error) => {
-      return res.send(error);
+      return res.status(500).send(error);
     });
 };
 
@@ -119,7 +119,7 @@ exports.receiveNewBlock = (req, res) => {
     lastBlock.hash !== newBlock.prevBlockHash ||
     lastBlock["index"] + 1 !== newBlock["index"]
   ) {
-    return res.json({ note: "New block rejected", newBlock });
+    return res.status(400).json({ note: "New block rejected", newBlock });
   } else {
     testcoin.chain.push(newBlock);
     testcoin.pendingTransactions = [];
@@ -172,7 +172,7 @@ exports.registerAndBroadcastNode = (req, res) => {
       });
     })
     .catch((error) => {
-      return res.status(400).send(error);
+      return res.status(500).send(error);
     });
 };
 
