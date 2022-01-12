@@ -465,17 +465,18 @@
                     "value": {
                       "note": "New block received and accepted",
                       "newBlock": {
-                        "index": 1,
-                        "timestamp": 1642002073477,
+                        "index": 2,
+                        "timestamp": 1642010815329,
                         "transactions": [
                           {
+                            "transactionId": "3e5c856073d211ec8f13b941e4a40c7b",
                             "amount": 10,
                             "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
                             "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
                           }
                         ],
-                        "nonce": 0,
-                        "hash": "0",
+                        "nonce": 54068,
+                        "hash": "00008410e1b515081b3c124abe1c04da08cae7acedddc79c471e7a7794d81520",
                         "prevBlockHash": "0"
                       }
                     }
@@ -514,17 +515,18 @@
                     "value": {
                       "note": "New block rejected",
                       "newBlock": {
-                        "index": 1,
-                        "timestamp": 1642002073477,
+                        "index": 2,
+                        "timestamp": 1642010815329,
                         "transactions": [
                           {
+                            "transactionId": "3e5c856073d211ec8f13b941e4a40c7b",
                             "amount": 10,
                             "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
                             "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
                           }
                         ],
-                        "nonce": 0,
-                        "hash": "0",
+                        "nonce": 54068,
+                        "hash": "00008410e1b515081b3c124abe1c04da08cae7acedddc79c471e7a7794d81520",
                         "prevBlockHash": "0"
                       }
                     }
@@ -945,18 +947,21 @@
       },
       "newBlock": {
         "value": {
-          "index": 1,
-          "timestamp": 1642002073477,
-          "transactions": [
-            {
-              "amount": 10,
-              "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
-              "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
-            }
-          ],
-          "nonce": 0,
-          "hash": "0",
-          "prevBlockHash": "0"
+          "newBlock": {
+            "index": 2,
+            "timestamp": 1642010815329,
+            "transactions": [
+              {
+                "transactionId": "3e5c856073d211ec8f13b941e4a40c7b",
+                "amount": 10,
+                "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+              }
+            ],
+            "nonce": 54068,
+            "hash": "00008410e1b515081b3c124abe1c04da08cae7acedddc79c471e7a7794d81520",
+            "prevBlockHash": "0"
+          }
         }
       },
       "axiosError": {
@@ -1110,76 +1115,93 @@
               "type": "object",
               "x-examples": {
                 "example-1": {
-                  "index": 1,
-                  "timestamp": 1642002073477,
-                  "transactions": [
-                    {
-                      "amount": "",
-                      "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
-                      "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
-                    }
-                  ],
-                  "nonce": 0,
-                  "hash": "0",
-                  "prevBlockHash": "0"
+                  "newBlock": {
+                    "index": 2,
+                    "timestamp": 1642010815329,
+                    "transactions": [
+                      {
+                        "transactionId": "3e5c856073d211ec8f13b941e4a40c7b",
+                        "amount": 10,
+                        "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                        "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+                      }
+                    ],
+                    "nonce": 54068,
+                    "hash": "00008410e1b515081b3c124abe1c04da08cae7acedddc79c471e7a7794d81520",
+                    "prevBlockHash": "0"
+                  }
                 }
               },
               "properties": {
-                "index": {
-                  "type": "number"
-                },
-                "timestamp": {
-                  "type": "number"
-                },
-                "transactions": {
-                  "type": "array",
-                  "uniqueItems": false,
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "amount": {
-                        "type": "number",
-                        "minimum": 0
-                      },
-                      "sender": {
-                        "type": "string",
-                        "minLength": 2,
-                        "maxLength": 64
-                      },
-                      "recipient": {
-                        "type": "string",
-                        "maxLength": 64,
-                        "minLength": 32
+                "newBlock": {
+                  "type": "object",
+                  "required": [
+                    "index",
+                    "timestamp",
+                    "transactions",
+                    "nonce",
+                    "hash",
+                    "prevBlockHash"
+                  ],
+                  "properties": {
+                    "index": {
+                      "type": "number"
+                    },
+                    "timestamp": {
+                      "type": "number"
+                    },
+                    "transactions": {
+                      "type": "array",
+                      "uniqueItems": false,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "transactionId": {
+                            "type": "string",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "amount": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "sender": {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 64
+                          },
+                          "recipient": {
+                            "type": "string",
+                            "minLength": 32,
+                            "maxLength": 64
+                          }
+                        },
+                        "required": [
+                          "transactionId",
+                          "amount",
+                          "sender",
+                          "recipient"
+                        ]
                       }
                     },
-                    "required": [
-                      "amount",
-                      "sender",
-                      "recipient"
-                    ]
+                    "nonce": {
+                      "type": "number"
+                    },
+                    "hash": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "prevBlockHash": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    }
                   }
-                },
-                "nonce": {
-                  "type": "number"
-                },
-                "hash": {
-                  "type": "string",
-                  "maxLength": 64,
-                  "minLength": 1
-                },
-                "prevBlockHash": {
-                  "type": "string",
-                  "maxLength": 64,
-                  "minLength": 1
                 }
               },
               "required": [
-                "index",
-                "timestamp",
-                "transactions",
-                "nonce",
-                "hash",
-                "prevBlockHash"
+                "newBlock"
               ]
             },
             "examples": {
