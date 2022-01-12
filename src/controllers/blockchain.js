@@ -72,11 +72,10 @@ exports.createNewBlock = (req, res) => {
   const nonce = testcoin.proofOfWork(prevBlockHash, currBlockData);
   const blockHash = testcoin.hashBlock(prevBlockHash, currBlockData, nonce);
 
-  testcoin.createNewTransaction(12.5, "00", nodeAddress);
   const newBlock = testcoin.createNewBlock(nonce, prevBlockHash, blockHash);
 
   const mineBlocksPromises = [];
-  tescoin.networkNodes.forEach((networkNodesUrl) => {
+  testcoin.networkNodes.forEach((networkNodeUrl) => {
     const mineBlockOpt = {
       method: "post",
       url: networkNodeUrl + "/api/v1/receive-new-block",
@@ -85,28 +84,48 @@ exports.createNewBlock = (req, res) => {
     };
 
     mineBlocksPromises.push(axios(mineBlockOpt));
-
-    Promise.all(mineBlocksPromises)
-      .then((response) => {
-        const transOpt = {
-          method: "post",
-          url: networkNodeUrl + "/api/v1/transaction/broadcast",
-          data: { amount: 12.5, sender: "00", recipient: nodeAddress },
-          headers: { "Content-Type": "application/json" }
-        };
-
-        return axios(transOpt);
-      })
-      .then((response) => {
-        return res.json({
-          note: "New block mined successfully",
-          block: newBlock
-        });
-      })
-      .catch((error) => {
-        return res.send(error);
-      });
   });
+
+  Promise.all(mineBlocksPromises)
+    .then((response) => {
+      const transOpt = {
+        method: "post",
+        url: testcoin.currentNodeUrl + "/api/v1/transaction/broadcast",
+        data: { amount: 12.5, sender: "00", recipient: nodeAddress },
+        headers: { "Content-Type": "application/json" }
+      };
+
+      return axios(transOpt);
+    })
+    .then((response) => {
+      return res.json({
+        note: "New block mined successfully",
+        block: newBlock
+      });
+    })
+    .catch((error) => {
+      return res.send(error);
+    });
+};
+
+// @desc Receive a new block and broadcast it the network
+// @route POST /api/v1/receive-new-block
+// @access Public
+exports.receiveNewBlock = (req, res) => {
+  const newBlock = req.body.newBlock;
+  const lastBlock = testcoin.getLastBlock();
+
+  if (
+    lastBlock.hash !== newBlock.prevBlockHash ||
+    lastBlock["index"] + 1 !== newBlock["index"]
+  ) {
+    return res.json({ note: "New block rejected", newBlock });
+  } else {
+    testcoin.chain.push(newBlock);
+    testcoin.pendingTransactions = [];
+
+    return res.json({ note: "New block received and accepted", newBlock });
+  }
 };
 
 // @desc Register a new node and broadcast it the network
