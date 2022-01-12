@@ -26,21 +26,22 @@ exports.createTransaction = (req, res) => {
 // @route POST /api/v1/transaction/broadcast
 // @access Public
 exports.createAndBroadcastTrans = (req, res) => {
-  const newTransaction = testcoin.createNewTransaction(
-    req.body.amount,
-    req.body.sender,
-    req.body.recipient
-  );
+  const { transactionId, amount, sender, recipient } =
+    testcoin.createNewTransaction(
+      req.body.amount,
+      req.body.sender,
+      req.body.recipient
+    );
 
-  testcoin.addToPendingTrans(newTransaction);
+  testcoin.addToPendingTrans({ transactionId, amount, sender, recipient });
 
   const createTransPromises = [];
   testcoin.networkNodes.forEach((networkNodeUrl) => {
     const createTransOpt = {
       method: "post",
       url: networkNodeUrl + "/api/v1/transaction",
-      data: { newTransaction },
-      headers: { "content-type": "application/json" }
+      data: { transactionId, amount, sender, recipient },
+      headers: { "Content-Type": "application/json" }
     };
 
     createTransPromises.push(axios(createTransOpt));
@@ -74,7 +75,38 @@ exports.createNewBlock = (req, res) => {
   testcoin.createNewTransaction(12.5, "00", nodeAddress);
   const newBlock = testcoin.createNewBlock(nonce, prevBlockHash, blockHash);
 
-  return res.json({ note: "New block mined successfully", block: newBlock });
+  const mineBlocksPromises = [];
+  tescoin.networkNodes.forEach((networkNodesUrl) => {
+    const mineBlockOpt = {
+      method: "post",
+      url: networkNodeUrl + "/api/v1/receive-new-block",
+      data: { newBlock },
+      headers: { "Content-Type": "application/json" }
+    };
+
+    mineBlocksPromises.push(axios(mineBlockOpt));
+
+    Promise.all(mineBlocksPromises)
+      .then((response) => {
+        const transOpt = {
+          method: "post",
+          url: networkNodeUrl + "/api/v1/transaction/broadcast",
+          data: { amount: 12.5, sender: "00", recipient: nodeAddress },
+          headers: { "Content-Type": "application/json" }
+        };
+
+        return axios(transOpt);
+      })
+      .then((response) => {
+        return res.json({
+          note: "New block mined successfully",
+          block: newBlock
+        });
+      })
+      .catch((error) => {
+        return res.send(error);
+      });
+  });
 };
 
 // @desc Register a new node and broadcast it the network
@@ -94,7 +126,7 @@ exports.registerAndBroadcastNode = (req, res) => {
       method: "post",
       url: networkNodeUrl + "/api/v1/register-node",
       data: { newNodeUrl },
-      headers: { "content-type": "application/json" }
+      headers: { "Content-Type": "application/json" }
     };
 
     registerNodesPromises.push(axios(registerNodeOpt));
@@ -111,13 +143,14 @@ exports.registerAndBroadcastNode = (req, res) => {
         headers: { "Content-Type": "application/json" }
       };
 
-      axios(registerBulkOpt).then((response) => {
-        return res.json({
-          note: "New node registered with network successfully"
-        });
-      });
+      axios(registerBulkOpt);
 
       testcoin.networkNodes.push(newNodeUrl);
+    })
+    .then((response) => {
+      return res.json({
+        note: "New node registered with network successfully"
+      });
     })
     .catch((error) => {
       return res.status(400).send(error);
