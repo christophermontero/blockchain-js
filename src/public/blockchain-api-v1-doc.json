@@ -320,6 +320,52 @@
           "$ref": "#/components/requestBodies/registerNode"
         }
       }
+    },
+    "/api/v1/transaction/broadcast": {
+      "post": {
+        "summary": "Create and broadcast transaction",
+        "operationId": "post-transaction-broadcast",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "x-examples": {
+                    "example-1": {
+                      "note": "Transaction created and broadcast successfully"
+                    }
+                  },
+                  "properties": {
+                    "note": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "transaction-broadcast": {
+                    "value": {
+                      "note": "Transaction created and broadcast successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/bodyValidation"
+          }
+        },
+        "description": "Create a new transaction and transmits it to all nodes in the network.",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/transaction"
+        },
+        "tags": [
+          "transaction"
+        ]
+      }
     }
   },
   "components": {
