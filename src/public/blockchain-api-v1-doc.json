@@ -161,6 +161,9 @@
                 }
               }
             }
+          },
+          "500": {
+            "$ref": "#/components/responses/axiosError"
           }
         },
         "operationId": "get-mine",
@@ -438,24 +441,24 @@
               "application/json": {
                 "schema": {
                   "description": "",
-                  "type": "object",
                   "x-examples": {
                     "example-1": {
                       "note": "New block received and accepted"
                     }
                   },
-                  "properties": {
-                    "note": {
-                      "type": "string"
-                    },
-                    "newBlock": {
-                      "allOf": [
-                        {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "note": {
+                          "type": "string"
+                        },
+                        "newBlock": {
                           "$ref": "#/components/schemas/Block"
                         }
-                      ]
+                      }
                     }
-                  }
+                  ],
+                  "type": "object"
                 },
                 "examples": {
                   "block-accepted": {
@@ -487,22 +490,43 @@
               "application/json": {
                 "schema": {
                   "description": "",
-                  "type": "object",
                   "x-examples": {
                     "example-1": {
                       "note": "New block rejected"
                     }
                   },
-                  "properties": {
-                    "note": {
-                      "type": "string"
-                    },
-                    "": {
-                      "allOf": [
-                        {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "note": {
+                          "type": "string"
+                        },
+                        "": {
                           "$ref": "#/components/schemas/Block"
                         }
-                      ]
+                      }
+                    }
+                  ],
+                  "type": "object"
+                },
+                "examples": {
+                  "block-rejected": {
+                    "value": {
+                      "note": "New block rejected",
+                      "newBlock": {
+                        "index": 1,
+                        "timestamp": 1642002073477,
+                        "transactions": [
+                          {
+                            "amount": 10,
+                            "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                            "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+                          }
+                        ],
+                        "nonce": 0,
+                        "hash": "0",
+                        "prevBlockHash": "0"
+                      }
                     }
                   }
                 }
