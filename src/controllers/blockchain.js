@@ -54,7 +54,7 @@ exports.createAndBroadcastTrans = (req, res) => {
       });
     })
     .catch((error) => {
-      return res.status(500).send(error);
+      return res.status(error.response.status).send(error.response.data);
     });
 };
 
@@ -104,7 +104,7 @@ exports.createNewBlock = (req, res) => {
       });
     })
     .catch((error) => {
-      return res.status(500).send(error);
+      return res.status(error.response.status).send(error.response.data);
     });
 };
 
@@ -172,7 +172,7 @@ exports.registerAndBroadcastNode = (req, res) => {
       });
     })
     .catch((error) => {
-      return res.status(500).send(error);
+      return res.status(error.response.status).send(error.response.data);
     });
 };
 
