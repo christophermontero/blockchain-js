@@ -80,13 +80,13 @@ Blockchain.prototype.proofOfWork = function (prevBlockHash, currBlockData) {
 Blockchain.prototype.chainIsValid = function (blockchain) {
   let validChain = true;
 
-  for (let i = 1; i < blockchain.length; i++) {
-    const currBlock = blockchain[i];
-    const prevBlock = blockchain[i - 1];
+  for (let i = 1; i < blockchain.chain.length; i++) {
+    const currBlock = blockchain.chain[i];
+    const prevBlock = blockchain.chain[i - 1];
 
     const blockHash = this.hashBlock(
       prevBlock["hash"],
-      { transaction: currBlock["transaction"], index: currBlock["index"] },
+      { transactions: currBlock["transactions"], index: currBlock["index"] },
       currBlock["nonce"]
     );
 
@@ -97,7 +97,7 @@ Blockchain.prototype.chainIsValid = function (blockchain) {
       validChain = false;
     }
 
-    const genesisBlock = blockchain[0];
+    const genesisBlock = blockchain.chain[0];
     if (
       genesisBlock["nonce"] !== 0 ||
       genesisBlock["prevBlockHash"] !== "0" ||

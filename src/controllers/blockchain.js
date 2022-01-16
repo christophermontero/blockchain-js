@@ -65,8 +65,8 @@ exports.createNewBlock = (req, res) => {
   const lastBlock = testcoin.getLastBlock();
   const prevBlockHash = lastBlock["hash"];
   const currBlockData = {
-    transaction: testcoin.pendingTransactions,
-    index: lastBlock["index"]
+    transactions: testcoin.pendingTransactions,
+    index: lastBlock["index"] + 1
   };
 
   const nonce = testcoin.proofOfWork(prevBlockHash, currBlockData);
