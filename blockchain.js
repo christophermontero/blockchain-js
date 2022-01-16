@@ -77,12 +77,12 @@ Blockchain.prototype.proofOfWork = function (prevBlockHash, currBlockData) {
   return nonce;
 };
 
-Blockchain.prototype.chainIsValid = function (blockchain) {
+Blockchain.prototype.chainIsValid = function (chain) {
   let validChain = true;
 
-  for (let i = 1; i < blockchain.chain.length; i++) {
-    const currBlock = blockchain.chain[i];
-    const prevBlock = blockchain.chain[i - 1];
+  for (let i = 1; i < chain.length; i++) {
+    const currBlock = chain[i];
+    const prevBlock = chain[i - 1];
 
     const blockHash = this.hashBlock(
       prevBlock["hash"],
@@ -97,7 +97,7 @@ Blockchain.prototype.chainIsValid = function (blockchain) {
       validChain = false;
     }
 
-    const genesisBlock = blockchain.chain[0];
+    const genesisBlock = chain[0];
     if (
       genesisBlock["nonce"] !== 0 ||
       genesisBlock["prevBlockHash"] !== "0" ||

@@ -216,3 +216,58 @@ exports.registerNodesBulk = (req, res) => {
 
   return res.send({ note: "Bulk registration successfully" });
 };
+
+// @desc Consensus algorithm
+// @route GET /api/v1/consensus
+// @access Public
+exports.consensus = (req, res) => {
+  const chainsPromises = [];
+  testcoin.networkNodes.forEach((networkNodeUrl) => {
+    const getChainOpt = {
+      method: "get",
+      url: networkNodeUrl + "/api/v1/blockchain",
+      headers: { "Content-Type": "application/json" }
+    };
+
+    chainsPromises.push(axios(getChainOpt));
+  });
+
+  Promise.all(chainsPromises)
+    .then((blockchains) => {
+      const currChainLen = testcoin.chain.length;
+      let maxChainLen = currChainLen;
+      let newLongestChain = null;
+      let newPendingTrans = null;
+
+      blockchains.forEach((blockchain) => {
+        if (blockchain.data.chain.length > maxChainLen) {
+          maxChainLen = blockchain.data.chain.length;
+          newLongestChain = blockchain.data.chain;
+          newPendingTrans = blockchain.data.pendingTransactions;
+        }
+      });
+
+      if (!newLongestChain) {
+        return res.json({
+          note: "Current chain has not been replaced",
+          chain: testcoin.chain
+        });
+      } else if (newLongestChain && !testcoin.chainIsValid(newLongestChain)) {
+        return res.status(409).json({
+          note: "Some chain was tampered",
+          chain: testcoin.chain
+        });
+      } else {
+        testcoin.chain = newLongestChain;
+        testcoin.pendingTransactions = newPendingTrans;
+
+        return res.json({
+          note: "This chain has been replaced",
+          chain: testcoin.chain
+        });
+      }
+    })
+    .catch((error) => {
+      return res.send(error);
+    });
+};
