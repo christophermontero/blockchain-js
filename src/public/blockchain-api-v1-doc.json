@@ -1247,6 +1247,9 @@
       "name": "blockchain"
     },
     {
+      "name": "consensus"
+    },
+    {
       "name": "mine"
     },
     {

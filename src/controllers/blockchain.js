@@ -271,3 +271,26 @@ exports.consensus = (req, res) => {
       return res.send(error);
     });
 };
+
+// @desc Get block by hash
+// @route GET /api/v1/blockchain/:blockhash
+// @access Public
+exports.getBlockByHash = (req, res) => {
+  const blockHash = req.params.blockHash;
+
+  const correctBlock = testcoin.getBlock(blockHash);
+
+  if (!correctBlock) return res.status(404).json({ block: correctBlock });
+
+  return res.json({ block: correctBlock });
+};
+
+// @desc Get transaction by Id
+// @route GET /api/v1/transaction/:transactionId
+// @access Public
+exports.getTransById = (req, res) => {};
+
+// @desc Get address
+// @route GET /api/v1/address/:address
+// @access Public
+exports.getAddress = (req, res) => {};
