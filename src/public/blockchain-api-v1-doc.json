@@ -330,7 +330,9 @@
                 },
                 "examples": {
                   "already-exists": {
-                    "$ref": "#/components/examples/alreadyExist"
+                    "value": {
+                      "note": "Node already exists"
+                    }
                   }
                 }
               }
@@ -740,6 +742,69 @@
         ],
         "description": "The algorithm contrast the information the whole nodes to verify the data in the network."
       }
+    },
+    "/api/v1/block/{blockHash}": {
+      "get": {
+        "summary": "Get block by hash",
+        "tags": [
+          "blockchain"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "block": {
+                      "$ref": "#/components/schemas/Block"
+                    }
+                  }
+                },
+                "examples": {
+                  "block-finded": {
+                    "$ref": "#/components/examples/block"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "x-examples": {
+                    "example-1": {
+                      "block": null
+                    }
+                  },
+                  "properties": {
+                    "block": {}
+                  }
+                },
+                "examples": {
+                  "non-block": {
+                    "value": {
+                      "block": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-block-by-hash",
+        "description": "Get block by hash"
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/blockHash"
+        }
+      ]
     }
   },
   "components": {
@@ -995,11 +1060,6 @@
           "newNodeUrl": "http://localhost:3002"
         }
       },
-      "alreadyExist": {
-        "value": {
-          "note": "Node already exists"
-        }
-      },
       "networkNodes": {
         "value": {
           "allNetworkNodes": [
@@ -1023,6 +1083,25 @@
             ],
             "nonce": 54068,
             "hash": "00008410e1b515081b3c124abe1c04da08cae7acedddc79c471e7a7794d81520",
+            "prevBlockHash": "0"
+          }
+        }
+      },
+      "block": {
+        "value": {
+          "block": {
+            "index": 2,
+            "timestamp": 1642547406903,
+            "transactions": [
+              {
+                "transactionId": "c51a317078b311ec821ac1453c51d03c",
+                "amount": 20,
+                "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+              }
+            ],
+            "nonce": 23935,
+            "hash": "00008383118e00066426dffbc361ff0c77fcab1627265e1ed84241ffe3a7c682",
             "prevBlockHash": "0"
           }
         }
@@ -1239,6 +1318,17 @@
             }
           }
         }
+      }
+    },
+    "parameters": {
+      "blockHash": {
+        "name": "blockHash",
+        "in": "path",
+        "schema": {
+          "type": "string",
+          "example": "00008383118e00066426dffbc361ff0c77fcab1627265e1ed84241ffe3a7c682"
+        },
+        "required": true
       }
     }
   },

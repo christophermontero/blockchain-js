@@ -9,6 +9,7 @@ const registerNode = require("../routes/register-node");
 const registerNodesBulk = require("../routes/register-nodes-bulk");
 const receiveNewBlock = require("../routes/receive-new-block");
 const consensus = require("../routes/consensus");
+const block = require("../routes/block");
 
 module.exports = function (app) {
   // Mount routes
@@ -21,4 +22,5 @@ module.exports = function (app) {
   app.use("/api/v1/register-nodes-bulk", registerNodesBulk);
   app.use("/api/v1/receive-new-block", receiveNewBlock);
   app.use("/api/v1/consensus", consensus);
+  app.use("/api/v1/block", block);
 };

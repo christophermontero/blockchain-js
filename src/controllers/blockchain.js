@@ -273,7 +273,7 @@ exports.consensus = (req, res) => {
 };
 
 // @desc Get block by hash
-// @route GET /api/v1/blockchain/:blockhash
+// @route GET /api/v1/block/:blockhash
 // @access Public
 exports.getBlockByHash = (req, res) => {
   const blockHash = req.params.blockHash;
