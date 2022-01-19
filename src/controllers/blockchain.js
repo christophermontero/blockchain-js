@@ -290,9 +290,10 @@ exports.getBlockByHash = (req, res) => {
 // @access Public
 exports.getTransById = (req, res) => {
   const transId = req.params.transId;
-  const transactionData = testcoin.getTransaction(transId);
+  const { transaction, block } = testcoin.getTransaction(transId);
 
-  if (!transactionData) return res.status(404).json({ transaction, block });
+  if (!transaction || !block)
+    return res.status(404).json({ transaction, block });
 
   return res.json({ transaction, block });
 };
@@ -302,9 +303,10 @@ exports.getTransById = (req, res) => {
 // @access Public
 exports.getAddress = (req, res) => {
   const address = req.params.address;
-  const addressData = testcoin.getAddressData(address);
+  const { addressTransactions, balance } = testcoin.getAddressData(address);
 
-  if (!addressData) return res.status(404).json({ addressData });
+  if (!addressTransactions || !balance)
+    return res.status(404).json({ addressTransactions, balance });
 
-  return res.json({ addressData });
+  return res.json({ addressTransactions, balance });
 };
