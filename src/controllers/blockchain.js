@@ -290,11 +290,9 @@ exports.getBlockByHash = (req, res) => {
 // @access Public
 exports.getTransById = (req, res) => {
   const transId = req.params.transId;
+  const transactionData = testcoin.getTransaction(transId);
 
-  const { transaction, block } = testcoin.getTransaction(transId);
-
-  if (!transaction || !block)
-    return res.status(404).json({ transaction, block });
+  if (!transactionData) return res.status(404).json({ transaction, block });
 
   return res.json({ transaction, block });
 };
@@ -302,4 +300,11 @@ exports.getTransById = (req, res) => {
 // @desc Get address
 // @route GET /api/v1/address/:address
 // @access Public
-exports.getAddress = (req, res) => {};
+exports.getAddress = (req, res) => {
+  const address = req.params.address;
+  const addressData = testcoin.getAddressData(address);
+
+  if (!addressData) return res.status(404).json({ addressData });
+
+  return res.json({ addressData });
+};
