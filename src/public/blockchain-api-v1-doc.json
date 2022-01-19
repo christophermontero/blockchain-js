@@ -105,7 +105,8 @@
         "tags": [
           "transaction"
         ]
-      }
+      },
+      "parameters": []
     },
     "/api/v1/mine": {
       "get": {
@@ -798,13 +799,83 @@
           }
         },
         "operationId": "get-block-by-hash",
-        "description": "Get block by hash"
+        "description": "Get block using his digest"
       },
       "parameters": [
         {
           "$ref": "#/components/parameters/blockHash"
         }
       ]
+    },
+    "/api/v1/transaction/{transId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/transId"
+        }
+      ],
+      "get": {
+        "summary": "Get transaction by id",
+        "tags": [
+          "transaction"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transaction": {
+                      "$ref": "#/components/schemas/Transaction"
+                    },
+                    "block": {
+                      "$ref": "#/components/schemas/Block"
+                    }
+                  }
+                },
+                "examples": {
+                  "get-transaction": {
+                    "$ref": "#/components/examples/transById"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "",
+                  "x-examples": {
+                    "example-1": {
+                      "transaction": null,
+                      "block": null
+                    }
+                  },
+                  "additionalProperties": false,
+                  "properties": {
+                    "transaction": {},
+                    "block": {}
+                  }
+                },
+                "examples": {
+                  "non-transaction": {
+                    "value": {
+                      "transaction": null,
+                      "block": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-transaction-by-id",
+        "description": "Get transaction using his id"
+      }
     }
   },
   "components": {
@@ -1105,6 +1176,31 @@
             "prevBlockHash": "0"
           }
         }
+      },
+      "transById": {
+        "value": {
+          "transaction": {
+            "transactionId": "9ff063e0793211ec888ee7a2f81cdad0",
+            "amount": 50,
+            "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+            "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+          },
+          "block": {
+            "index": 2,
+            "timestamp": 1642601900042,
+            "transactions": [
+              {
+                "transactionId": "9ff063e0793211ec888ee7a2f81cdad0",
+                "amount": 50,
+                "sender": "cf942722a4ecc3b89e3911fbb8f84071bca39142aba93dc9b971bb06ae980819",
+                "recipient": "a6d0f357931dfc871f97164d8c848501e25377a9a327d93241e0abd0add383ea"
+              }
+            ],
+            "nonce": 19477,
+            "hash": "00006dbd82bce5674b1ce3667315e9009f2d3d2efa38628bd8dbc48e59c85676",
+            "prevBlockHash": "0"
+          }
+        }
       }
     },
     "requestBodies": {
@@ -1328,6 +1424,17 @@
           "type": "string",
           "example": "00008383118e00066426dffbc361ff0c77fcab1627265e1ed84241ffe3a7c682"
         },
+        "required": true,
+        "description": "Block hash SHA256"
+      },
+      "transId": {
+        "name": "transId",
+        "in": "path",
+        "schema": {
+          "type": "string",
+          "example": "9ff063e0793211ec888ee7a2f81cdad0"
+        },
+        "description": "Transaction id",
         "required": true
       }
     }

@@ -288,7 +288,16 @@ exports.getBlockByHash = (req, res) => {
 // @desc Get transaction by Id
 // @route GET /api/v1/transaction/:transactionId
 // @access Public
-exports.getTransById = (req, res) => {};
+exports.getTransById = (req, res) => {
+  const transId = req.params.transId;
+
+  const { transaction, block } = testcoin.getTransaction(transId);
+
+  if (!transaction || !block)
+    return res.status(404).json({ transaction, block });
+
+  return res.json({ transaction, block });
+};
 
 // @desc Get address
 // @route GET /api/v1/address/:address
