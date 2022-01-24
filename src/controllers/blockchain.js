@@ -1,6 +1,7 @@
 const Blockchain = require("../../blockchain");
 const { v1: uuidv1 } = require("uuid");
 const axios = require("axios");
+const path = require("path");
 
 const nodeAddress = uuidv1().split("-").join("");
 const testcoin = new Blockchain();
@@ -309,4 +310,11 @@ exports.getAddress = (req, res) => {
     return res.status(404).json({ addressTransactions, balance });
 
   return res.json({ addressTransactions, balance });
+};
+
+// @desc Get block explorer static page
+// @route GET /block-explorer
+// @access Public
+exports.blockExplorer = (req, res) => {
+  return res.sendFile(path.resolve("block-explorer/index.html"));
 };

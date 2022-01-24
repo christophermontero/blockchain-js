@@ -11,6 +11,7 @@ const receiveNewBlock = require("../routes/receive-new-block");
 const consensus = require("../routes/consensus");
 const block = require("../routes/block");
 const getAddressData = require("../routes/address");
+const blockExplorer = require("../routes/block-explorer");
 
 module.exports = function (app) {
   // Mount routes
@@ -25,4 +26,5 @@ module.exports = function (app) {
   app.use("/api/v1/consensus", consensus);
   app.use("/api/v1/block", block);
   app.use("/api/v1/address", getAddressData);
+  app.use("/block-explorer", blockExplorer);
 };
