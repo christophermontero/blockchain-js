@@ -48,10 +48,15 @@
             </button>
             <p
               ng-if="
-                !block && !transaction && !addressData && initialSearchMade
+                !block &&
+                !transaction &&
+                !addressTransactions &&
+                !balance &&
+                initialSearchMade
               "
               class="no-data-text"
             >
+              {{ balance | json }}
               No data found for search.
             </p>
           </form>
@@ -81,7 +86,7 @@
               </tr>
               <tr>
                 <td class="bold">Previous Hash</td>
-                <td>{{ block.previousBlockHash }}</td>
+                <td>{{ block.prevBlockHash }}</td>
               </tr>
               <tr>
                 <td class="bold">Number Transactions</td>
@@ -112,11 +117,9 @@
           <!-- end 'display transaction' table -->
 
           <!-- 'display address' table -->
-          <h3 class="table-title" ng-if="addressData">Address</h3>
-          <p id="balance-text" ng-if="addressData">
-            (Balance: {{ addressData.addressBalance }})
-          </p>
-          <table class="table table-striped" ng-if="addressData">
+          <h3 class="table-title" ng-if="balance">Address</h3>
+          <p id="balance-text" ng-if="balance">(Balance: {{ balance }})</p>
+          <table class="table table-striped" ng-if="addressTransactions">
             <thead>
               <tr>
                 <th scope="col">Sender</th>
@@ -125,7 +128,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="transaction in addressData.addressTransactions">
+              <tr ng-repeat="transaction in addressTransactions">
                 <td>{{ transaction.sender }}</td>
                 <td>{{ transaction.recipient }}</td>
                 <td>{{ transaction.amount }}</td>
@@ -143,30 +146,36 @@
       app.controller("MainController", function ($scope, $http) {
         $scope.block = null;
         $scope.transaction = null;
-        $scope.addressData = null;
+        $scope.addressTransactions = null;
+        $scope.balance = null;
         $scope.initialSearchMade = false;
 
         $scope.fetchBlock = function (blockHash) {
-          $http.get(`/block/${blockHash}`).then((response) => {
+          $http.get(`/api/v1/block/${blockHash}`).then((response) => {
             $scope.block = response.data.block;
             $scope.transaction = null;
-            $scope.addressData = null;
+            $scope.addressTransactions = null;
+            $scope.balance = null;
           });
         };
 
-        $scope.fetchTransaction = function (transactionId) {
-          $http.get(`/transaction/${transactionId}`).then((response) => {
+        $scope.fetchTransaction = function (transId) {
+          $http.get(`/api/v1/transaction/${transId}`).then((response) => {
             $scope.transaction = response.data.transaction;
             $scope.block = null;
-            $scope.addressData = null;
+            $scope.addressTransactions = null;
+            $scope.balance = null;
           });
         };
 
         $scope.fetchAddressData = function (address) {
-          $http.get(`/address/${address}`).then((response) => {
-            $scope.addressData = response.data.addressData;
-            if (!$scope.addressData.addressTransactions.length)
-              $scope.addressData = null;
+          $http.get(`/api/v1/address/${address}`).then((response) => {
+            $scope.addressTransactions = response.data.addressTransactions;
+            $scope.balance = response.data.balance;
+            if (!$scope.addressTransactions.length) {
+              $scope.addressTransactions = null;
+              $scope.balance = null;
+            }
             $scope.block = null;
             $scope.transaction = null;
           });
